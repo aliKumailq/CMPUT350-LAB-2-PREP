@@ -28,6 +28,13 @@ const float TUBE_SPEED = 3.0f;
 //  Initial Bird Attributes
 //  Initialize the global (constant) variables for it here (radius, position, color)
 
+
+constexpr float INITIAL_BIRD_RADIUS = 15;
+constexpr float INITIAL_BIRD_POSITION_X = 100.0f;
+constexpr float INITIAL_BIRD_POSITION_Y = 400.0f;
+const auto INITIAL_BIRD_COLOR = sf::Color::Yellow;
+
+
 // ResourceManager just owns all the resources/assets you'd want in your game.
 // In an engine, you'd probably want to make this more flexible than what we have here
 //  (e.g., by setting up a mapping from resourceName->resource which can be modified at runtime).
@@ -67,19 +74,25 @@ struct TubePair {
 bool isTubeOffScreen(const TubePair& tube) { return tube.isOffScreen(); }
 
 struct BirdState {
-    BirdState() : velocityY{INITIAL_BIRD_VELOCITY_Y} {
+    BirdState() : birdShape(INITIAL_BIRD_RADIUS), velocityY{INITIAL_BIRD_VELOCITY_Y} {
         // ====== ====== ======
         // TODO: (Q1)
         //  - initialize the bird's shape (see below) to have
         //    appropriate size, color, and initial position.
         //  Note: consider using member initializer list to set the radius via ctor call.
         // ====== ====== ======
+        birdShape.setFillColor(sf::Color::Yellow);
+        birdShape.setPosition({INITIAL_BIRD_POSITION_X,INITIAL_BIRD_POSITION_Y});
+
+
+
     }
 
     // ====== ====== ======
     // TODO: (Q1)
     //  - add a field for the bird's shape.
     // ====== ====== ======
+    sf::CircleShape birdShape;
     float velocityY;
 };
 
@@ -201,6 +214,7 @@ void render(sf::RenderWindow& window, const GameState& gameState) {
     // ====== ====== ======
     // TODO: (Q1) Draw bird
     // ====== ====== ======
+    window.draw(gameState.bird.birdShape);
     window.display();
 }
 
