@@ -132,6 +132,8 @@ private:
     void applyPhysicsToBird() {
         // Apply gravity to bird
         bird.velocityY += GRAVITY;
+        bird.birdShape.move(sf::Vector2<float>(0, bird.velocityY));
+        
 
         // ====== ====== ======
         // TODO: (Q3)
@@ -140,6 +142,7 @@ private:
         //    Should be equivalent to: bird.positionY += bird.velocityY;
         //  - Note: bird's x-coordinate will alway be exactly 100.f
         // ====== ====== ======
+
 
         // ====== ====== ======
         // TODO: (Q3)
@@ -205,6 +208,7 @@ void handleInput(sf::Window& window, GameState& gameState, const ResourceManager
             if (keyPressed->scancode == sf::Keyboard::Scan::Space) {
                 // if said key was the space bar:
                 resources.jumpSound->play();
+                        gameState.bird.velocityY = -8.0f;
 
             }
 
