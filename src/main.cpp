@@ -5,6 +5,9 @@
 #include <random>
 #include <vector>
 
+#include <filesystem>
+#include <unistd.h>
+
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -258,7 +261,10 @@ int main() {
         //            std::cout << "raw address is " << intPtr.get() << '\n';
         // ====== ====== ======
 
-        if (!resources.jumpSoundBuffer->loadFromFile("/assets/jump.wav")) std::cerr << "Error loading file\n";
+        resources.jumpSoundBuffer = std::make_unique<sf::SoundBuffer>();
+        resources.jumpSound = std::make_unique<sf::Sound>(*(resources.jumpSoundBuffer));
+
+        if (!resources.jumpSoundBuffer->loadFromFile("assets/jump.wav")) std::cerr << "Warning: Could not load jump.wav\n";
         else resources.jumpSound->setBuffer(*(resources.jumpSoundBuffer));
 
         bool shouldQuit = false;
