@@ -107,6 +107,7 @@ struct GameState {
         // Note: bird is automatically initialized by BirdState's default ctor,
         // which you implemented above.
         generateInitialTubes();
+        leftMostTube = &(tubes[0]);
     }
 
     void updateState() {
@@ -129,6 +130,13 @@ private:
         generateInitialTubes();
     }
 
+    inline void resetGame() {
+        resetTubes();
+        bird.birdShape.setPosition(sf::Vector2<float>(INITIAL_BIRD_POSITION_X,INITIAL_BIRD_POSITION_Y));
+        bird.velocityY = INITIAL_BIRD_VELOCITY_Y;
+
+    }
+
     void applyPhysicsToBird() {
         // Apply gravity to bird
         bird.velocityY += GRAVITY;
@@ -146,9 +154,7 @@ private:
 
         const auto pos = bird.birdShape.getPosition();
         if (pos.y <= 0 || pos.y > WINDOW_HEIGHT || pos.x <= 0  || pos.x > WINDOW_WIDTH ) {
-            resetTubes();
-            bird.birdShape.setPosition(sf::Vector2<float>(INITIAL_BIRD_POSITION_X,INITIAL_BIRD_POSITION_Y));
-            bird.velocityY = INITIAL_BIRD_VELOCITY_Y;
+            resetGame();
         }
 
 
@@ -189,6 +195,13 @@ private:
         //  with another
         // ====== ====== ======
 
+        const auto birdBox = bird.birdShape.getGlobalBounds();
+        const auto topTubeBox = tubes[0].topTube.getGlobalBounds();
+        const auto bottomTubeBox = tubes[0].bottomTube.getGlobalBounds();
+
+        if(birdBox.findIntersection(topTubeBox) || birdBox.findIntersection(bottomTubeBox)) resetGame();
+
+
         // ====== ====== ======
         // TODO: (Q4)
         //  If bird hits tube, game should reset by resetting the tubes and resetting the bird
@@ -199,6 +212,7 @@ private:
 public:
     // game world objects
     std::vector<TubePair> tubes;
+    TubePair* leftMostTube;
     BirdState bird;
     // rng state
     std::mt19937 rng;
