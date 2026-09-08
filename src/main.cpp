@@ -144,6 +144,14 @@ private:
         // ====== ====== ======
 
 
+        const auto pos = bird.birdShape.getPosition();
+        if (pos.x * pos.y <= 0 || pos.x > WINDOW_WIDTH || pos.y > WINDOW_HEIGHT) {
+            resetTubes();
+            bird.birdShape.setPosition(sf::Vector2<float>(INITIAL_BIRD_POSITION_X,INITIAL_BIRD_POSITION_Y));
+            bird.velocityY = INITIAL_BIRD_VELOCITY_Y;
+        }
+
+
         // ====== ====== ======
         // TODO: (Q3)
         //  - Check if the bird has exceeded the bounds of the screen
