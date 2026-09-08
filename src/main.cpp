@@ -33,8 +33,6 @@ const float TUBE_SPEED = 3.0f;
 // TODO: (Q1)
 //  Initial Bird Attributes
 //  Initialize the global (constant) variables for it here (radius, position, color)
-
-
 constexpr float INITIAL_BIRD_RADIUS = 15;
 constexpr float INITIAL_BIRD_POSITION_X = 100.0f;
 constexpr float INITIAL_BIRD_POSITION_Y = 400.0f;
@@ -81,6 +79,7 @@ bool isTubeOffScreen(const TubePair& tube) { return tube.isOffScreen(); }
 
 struct BirdState {
     BirdState() : birdShape(INITIAL_BIRD_RADIUS), velocityY{INITIAL_BIRD_VELOCITY_Y} {
+                // initialize radius
         // ====== ====== ======
         // TODO: (Q1)
         //  - initialize the bird's shape (see below) to have
@@ -88,7 +87,8 @@ struct BirdState {
         //  Note: consider using member initializer list to set the radius via ctor call.
         // ====== ====== ======
         birdShape.setFillColor(INITIAL_BIRD_COLOR);
-        birdShape.setPosition({INITIAL_BIRD_POSITION_X,INITIAL_BIRD_POSITION_Y});
+        birdShape.setPosition({INITIAL_BIRD_POSITION_X,INITIAL_BIRD_POSITION_Y}); 
+        // initializing color and position
 
 
 
@@ -98,7 +98,7 @@ struct BirdState {
     // TODO: (Q1)
     //  - add a field for the bird's shape.
     // ====== ====== ======
-    sf::CircleShape birdShape;
+    sf::CircleShape birdShape; // birds shape
     float velocityY;
 };
 
@@ -107,7 +107,6 @@ struct GameState {
         // Note: bird is automatically initialized by BirdState's default ctor,
         // which you implemented above.
         generateInitialTubes();
-        leftMostTube = &(tubes[0]);
     }
 
     void updateState() {
@@ -140,30 +139,17 @@ private:
     void applyPhysicsToBird() {
         // Apply gravity to bird
         bird.velocityY += GRAVITY;
-        bird.birdShape.move(sf::Vector2<float>(0, bird.velocityY));
+        bird.birdShape.move(sf::Vector2<float>(0, bird.velocityY)); // applying velocity to bird
         
 
-        // ====== ====== ======
-        // TODO: (Q3)
-        //  - Update bird position according to the rule that bird's y-position
-        //    should have bird's y-velocity added to it every frame (assume dt = 1).
-        //    Should be equivalent to: bird.positionY += bird.velocityY;
-        //  - Note: bird's x-coordinate will alway be exactly 100.f
-        // ====== ====== ======
 
 
         const auto pos = bird.birdShape.getPosition();
         if (pos.y <= 0 || pos.y > WINDOW_HEIGHT || pos.x <= 0  || pos.x > WINDOW_WIDTH ) {
             resetGame();
-        }
+        } // checking if bird is within bounds and resetting otherwise
 
 
-        // ====== ====== ======
-        // TODO: (Q3)
-        //  - Check if the bird has exceeded the bounds of the screen
-        //    (i.e., if it's no longer visible). If not, game should reset by clearing
-        //    the tubes and restarting the game (setting the bird back to original initial position)
-        // ====== ====== ======
     }
 
     void updateTubes() {
@@ -200,19 +186,13 @@ private:
         const auto bottomTubeBox = tubes[0].bottomTube.getGlobalBounds();
 
         if(birdBox.findIntersection(topTubeBox) || birdBox.findIntersection(bottomTubeBox)) resetGame();
+        // Checking for collisions and resetting if they occur
 
-
-        // ====== ====== ======
-        // TODO: (Q4)
-        //  If bird hits tube, game should reset by resetting the tubes and resetting the bird
-        //  to its initial state (i.e., restarting the game)
-        // ====== ====== ======
     }
 
 public:
     // game world objects
     std::vector<TubePair> tubes;
-    TubePair* leftMostTube;
     BirdState bird;
     // rng state
     std::mt19937 rng;
@@ -229,17 +209,14 @@ void handleInput(sf::Window& window, GameState& gameState, const ResourceManager
             // if a key was pressed
             if (keyPressed->scancode == sf::Keyboard::Scan::Space) {
                 // if said key was the space bar:
-                resources.jumpSound->play();
-                        gameState.bird.velocityY = -8.0f;
+                resources.jumpSound->play(); // play jump sound
+                gameState.bird.velocityY = -8.0f; // launch bird in air if jumping
 
             }
 
         }
 
-        // ====== ====== ======
-        // TODO: (Q2)
-        //  implement jump logic (the key press should be space) and play jump sound fx
-        // ====== ====== ======
+
     }
 }
 
@@ -254,7 +231,7 @@ void render(sf::RenderWindow& window, const GameState& gameState) {
     // ====== ====== ======
     // TODO: (Q1) Draw bird
     // ====== ====== ======
-    window.draw(gameState.bird.birdShape);
+    window.draw(gameState.bird.birdShape); // drawing the bird.
     window.display();
 }
 
@@ -288,7 +265,7 @@ int main() {
         // ====== ====== ======
 
         resources.jumpSoundBuffer = std::make_unique<sf::SoundBuffer>();
-        resources.jumpSound = std::make_unique<sf::Sound>(*(resources.jumpSoundBuffer));
+        resources.jumpSound = std::make_unique<sf::Sound>(*(resources.jumpSoundBuffer)); // allocating and initializing
 
         if (!resources.jumpSoundBuffer->loadFromFile("assets/jump.wav")) std::cerr << "Warning: Could not load jump.wav\n";
         else resources.jumpSound->setBuffer(*(resources.jumpSoundBuffer));
