@@ -24,6 +24,9 @@ const float GRAVITY = 0.3f;
 const float JUMP_SPEED = -5.0f;  // (set velocity of bird in the Y direction upon jump)
 const float TUBE_SPEED = 3.0f;
 
+// Needed Asserts
+#define JUMP_SOUND_FILE_PATH "../assets/jump.wav"
+
 // TODO: (Q1)
 //  Initial Bird Attributes
 //  Initialize the global (constant) variables for it here (radius, position, color)
@@ -32,7 +35,7 @@ const float TUBE_SPEED = 3.0f;
 constexpr float INITIAL_BIRD_RADIUS = 15;
 constexpr float INITIAL_BIRD_POSITION_X = 100.0f;
 constexpr float INITIAL_BIRD_POSITION_Y = 400.0f;
-const auto INITIAL_BIRD_COLOR = sf::Color::Yellow;
+constexpr auto INITIAL_BIRD_COLOR = sf::Color::Yellow;
 
 
 // ResourceManager just owns all the resources/assets you'd want in your game.
@@ -81,7 +84,7 @@ struct BirdState {
         //    appropriate size, color, and initial position.
         //  Note: consider using member initializer list to set the radius via ctor call.
         // ====== ====== ======
-        birdShape.setFillColor(sf::Color::Yellow);
+        birdShape.setFillColor(INITIAL_BIRD_COLOR);
         birdShape.setPosition({INITIAL_BIRD_POSITION_X,INITIAL_BIRD_POSITION_Y});
 
 
@@ -194,6 +197,14 @@ void handleInput(sf::Window& window, GameState& gameState, const ResourceManager
         if (event->is<sf::Event::Closed>()) {
             window.close();
             shouldQuit = true;
+        } else if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+            // if a key was pressed
+            if (keyPressed->scancode == sf::Keyboard::Scan::Space) {
+                // if said key was the space bar:
+                resources.jumpSound->play();
+
+            }
+
         }
 
         // ====== ====== ======
@@ -246,6 +257,9 @@ int main() {
         //            std::cout << "value is " << *intPtr << '\n';
         //            std::cout << "raw address is " << intPtr.get() << '\n';
         // ====== ====== ======
+
+        if (!resources.jumpSoundBuffer->loadFromFile("/assets/jump.wav")) std::cerr << "Error loading file\n";
+        else resources.jumpSound->setBuffer(*(resources.jumpSoundBuffer));
 
         bool shouldQuit = false;
         // Main game loop
